@@ -1,0 +1,9 @@
+# https://ultrasaurus.com/2020/01/writing-c-library-in-rust/
+# https://dev.to/metal3d/understand-how-to-use-c-libraries-in-go-with-cgo-3dbn
+
+services:
+  ess-shell:
+    image: rust:slim
+    working_dir: /usr/src/ess
+    volumes:
+      - .:/usr/src/ess
