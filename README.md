@@ -15,7 +15,13 @@ Useful to remove libc dependencies (clean ldd)
 ```
 apt install musl musl-dev musl-tools
 rustup target add x86_64-unknown-linux-musl
-cargo build --target x86_64-unknown-linux-musl --release
+cargo build --bin sermatec-ess --target x86_64-unknown-linux-musl --release
+```
+
+Building a lib a C compatble library to use with C/C++/Python/Golang
+```
+cargo build --lib --release
+cbindgen --config cbindgen.toml --crate sermatec-ess --output target/release/libprotocol.h
 ```
 
 # CLI Example
