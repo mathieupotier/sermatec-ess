@@ -15,6 +15,7 @@ impl<'a> FieldApp<'a> {
         FieldApp { c: c, f: f, v: v }
     }
 
+    #[allow(dead_code)]
     pub fn is_real_string_type(&self) -> bool {
         match self.c.cmd.as_str() {
             "0A" => match self.f.name.as_str() {
@@ -44,7 +45,7 @@ impl<'a> FieldApp<'a> {
 
 impl<'a> FieldApp<'a> {
     /// Convert consts to human readable text
-    fn expand_fmt(&'a self) -> Option<&str> {
+    fn expand_fmt(&'a self) -> Option<&'a str> {
         match self.c.cmd.as_str() {
             "0A" => match self.f.name.as_str() {
                 "Charge and discharge status" => {
