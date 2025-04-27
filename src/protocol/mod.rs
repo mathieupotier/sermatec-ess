@@ -12,8 +12,6 @@ pub mod nom_helper;
 
 pub use command::Command;
 
-static PROTOCOL: &[u8] = include_bytes!("../../protocol/protocol-en.json");
-
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Protocol {
     pub id: String,
@@ -31,8 +29,8 @@ pub struct Version {
 }
 
 impl Protocol {
-    pub fn new() -> HashMap<String, Protocol> {
-        let protocol_str = String::from_utf8_lossy(PROTOCOL);
+    pub fn new(protocol_data: &[u8]) -> HashMap<String, Protocol> {
+        let protocol_str = String::from_utf8_lossy(protocol_data);
         let protocol: serde_json::Result<HashMap<String, Protocol>> =
             serde_json::from_str(&protocol_str);
         protocol.unwrap()

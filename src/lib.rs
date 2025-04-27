@@ -65,13 +65,19 @@ impl CVersion {
 
 
 #[no_mangle]
-pub extern "C" fn protocol_new() -> *mut CProtocol {
-    let protocols = Protocol::new();
+pub extern "C" fn protocol_new(data: *const u8, len: usize) -> *mut CProtocol {
+    if data.is_null() || len == 0 {
+        return std::ptr::null_mut();
+    }
+
+    let slice = unsafe { std::slice::from_raw_parts(data, len) };
+    let protocols = Protocol::new(slice);
+
     if let Some((_, protocol)) = protocols.into_iter().next() {
         let c_protocol = CProtocol::from_protocol(&protocol);
         Box::into_raw(Box::new(c_protocol))
     } else {
-        ptr::null_mut()
+        std::ptr::null_mut()
     }
 }
 
@@ -98,7 +104,41 @@ pub extern "C" fn protocol_get_command(
         .unwrap_or_default()
         .to_string();
 
-    // Convertir CProtocol en Protocol si nécessaire
-    // Appeler la méthode get_command et retourner le résultat
-    ptr::null() // Remplacez par la logique appropriée
+    let rust_protocol = Protocol {
+        id: unsafe { CString::from_raw(_protocol.id as *mut c_char) }
+            .to_str()
+            .unwrap_or_default()
+            .to_string(),
+        name: unsafe { CString::from_raw(_protocol.name as *mut c_char) }
+            .to_str()
+            .unwrap_or_default()
+            .to_string(),
+        versions: unsafe {
+            std::slice::from_raw_parts(_protocol.versions, _protocol.versions_len)
+                .iter()
+                .map(|v| Version {
+                    version: v.version as i16,
+                    query_commands: std::slice::from_raw_parts(
+                        v.query_commands,
+                        v.query_commands_len,
+                    )
+                    .iter()
+                    .map(|&cmd| {
+                        CString::from_raw(cmd as *mut c_char)
+                            .to_str()
+                            .unwrap_or_default()
+                            .to_string()
+                    })
+                    .collect(),
+                    commands: vec![], // Remplir si nécessaire
+                })
+                .collect()
+        },
+    };
+
+    if let Some(command) = rust_protocol.get_command(_version as i16, &_rust_command) {
+        return CString::new(command.cmd.clone()).unwrap().into_raw()
+    } else {
+        return ptr::null();
+    }
 }

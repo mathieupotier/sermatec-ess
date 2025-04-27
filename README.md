@@ -18,9 +18,10 @@ rustup target add x86_64-unknown-linux-musl
 cargo build --bin sermatec-ess --target x86_64-unknown-linux-musl --release
 ```
 
-Building a lib a C compatble library to use with C/C++/Python/Golang
+Building a lib a C compatible library to use with C/C++/Python/Golang
 ```
 cargo build --lib --release
+cargo install cbindgen
 cbindgen --config cbindgen.toml --crate sermatec-ess --output target/release/libprotocol.h
 ```
 

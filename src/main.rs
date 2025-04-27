@@ -61,8 +61,10 @@ enum Commands {
     },
 }
 
+static PROTOCOL: &[u8] = include_bytes!("../protocol/protocol-en.json");
+
 fn main() -> std::io::Result<()> {
-    let p = Protocol::new();
+    let p = Protocol::new(PROTOCOL);
     let cli = Cli::parse();
 
     println!("--===~ Sermatec ESS CLI AND MQTT PROXY ~===--");
